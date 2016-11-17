@@ -1,0 +1,29 @@
+@(username: String, currentWish: String)(implicit flash: Flash)
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Secret Nick 2016</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="@routes.Assets.at("/stylesheets/main.css")">
+  </head>
+  <body>
+    <div id="card" class="@flash.get("success").map(_ => "sent")">
+      @flash.get("success").map { successMsg =>
+        <div id="success-msg">
+          @successMsg
+        </div>
+      }
+      <p>Dear St. Niklaus ...</p>
+      <form action="/set_wish" method="POST">
+        <textarea name="wishText">@currentWish</textarea>
+        <br/>
+        <div id="signature">
+          Yours truly, @username
+          <button>Send</button>
+        </div>
+      </form>
+
+    </div>
+  </body>
+</html>
