@@ -6,27 +6,25 @@ import services.WishService
 
 class RootController(wishes: WishService) extends Controller {
 
+  def withUser(f: String => Request[AnyContent] => Result): Action[AnyContent] =
+    Action { request =>
+      val userName: String = request.session("userName")
+      f(userName)(request)
+    }
 
-  val index: Action[AnyContent] = Action { implicit request =>
-    val name = request.session("name")
-    val wish = wishes.getWishFor(name)
+  val index = withUser { userName => implicit request =>
+    val wish = wishes.getWishFor(userName)
     Ok(
-      views.html.index(name, wish)
+      views.html.index(userName, wish)
     )
   }
 
-  val setWish = Action { implicit request =>
+  val setWish = withUser { userName => implicit request =>
     val newWish = request.body.asFormUrlEncoded.flatMap(_("wishText").headOption).getOrElse("")
-    val name = request.session("name")
-    wishes.setWithFor(name, newWish)
+    wishes.setWithFor(userName, newWish)
     SeeOther(routes.RootController.index.url).flashing(
       "success" -> "Message is on its way."
     )
-  }
-
-  def setState(name: String, wish: String) = Action { implicit request =>
-    wishes.setWithFor(name, wish)
-    Ok("done").withSession(request.session + ("name", name))
   }
 
 }

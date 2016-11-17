@@ -1,6 +1,6 @@
 GET     /               controllers.RootController.index
 POST    /set_wish       controllers.RootController.setWish
 
-POST    /tmp/setState   controllers.RootController.setState(name: String, wish: String)
+GET     /login          controllers.LoginController.loginPage(name: String)
 
 GET     /assets/*file   controllers.Assets.at(path="/public", file)

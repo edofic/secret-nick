@@ -10,11 +10,13 @@ class CustomApplicationLoader extends ApplicationLoader {
 
     lazy val wishService = services.WishService.InMemory
     lazy val rootController = new controllers.RootController(wishService)
+    lazy val loginController = new controllers.LoginController()
     lazy val assets = new controllers.Assets(httpErrorHandler)
 
     lazy val router = new Routes(
       httpErrorHandler,
       rootController,
+      loginController,
       assets
     )
   }
