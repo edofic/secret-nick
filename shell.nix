@@ -7,4 +7,8 @@ pkgs.stdenv.mkDerivation rec {
     pkgs.elmPackages.elm
     pkgs.sbt
   ];
+
+  shellHook = ''
+    source DEV_SETTINGS
+  '';
 }

@@ -1,6 +1,7 @@
 GET     /               controllers.RootController.index
 POST    /set_wish       controllers.RootController.setWish
 
-GET     /login          controllers.LoginController.loginPage(name: String)
+GET     /login          controllers.LoginController.loginPage
+GET     /loginCallback  controllers.LoginController.loginCallback()
 
 GET     /assets/*file   controllers.Assets.at(path="/public", file)

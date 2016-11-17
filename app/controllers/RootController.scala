@@ -8,8 +8,11 @@ class RootController(wishes: WishService) extends Controller {
 
   def withUser(f: String => Request[AnyContent] => Result): Action[AnyContent] =
     Action { request =>
-      val userName: String = request.session("userName")
-      f(userName)(request)
+      request.session.get("userName").map { userName =>
+        f(userName)(request)
+      }.getOrElse {
+        SeeOther(routes.LoginController.loginPage.url)
+      }
     }
 
   val index = withUser { userName => implicit request =>
