@@ -16,15 +16,17 @@ class RootController(wishes: WishService) extends Controller {
     }
 
   val index = withUser { userName => implicit request =>
-    val wish = wishes.getWishFor(userName)
+    val (wish, pseudonym) = wishes.getWishFor(userName)
     Ok(
-      views.html.index(userName, wish)
+      views.html.index(userName, wish, pseudonym)
     )
   }
 
   val setWish = withUser { userName => implicit request =>
-    val newWish = request.body.asFormUrlEncoded.flatMap(_("wishText").headOption).getOrElse("")
-    wishes.setWithFor(userName, newWish)
+    val form = request.body.asFormUrlEncoded.get
+    val newWish = form("wishText").headOption.getOrElse("")
+    val pseudonym = form("pseudonym").headOption.getOrElse(userName)
+    wishes.setWithFor(userName, newWish, pseudonym)
     SeeOther(routes.RootController.index.url).flashing(
       "success" -> "Message is on its way."
     )

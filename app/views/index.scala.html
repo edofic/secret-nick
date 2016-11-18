@@ -1,4 +1,4 @@
-@(username: String, currentWish: String)(implicit flash: Flash)
+@(username: String, currentWish: String, pseudonym: String)(implicit flash: Flash)
 
 <!DOCTYPE html>
 <html>
@@ -19,7 +19,8 @@
         <textarea name="wishText">@currentWish</textarea>
         <br/>
         <div id="signature">
-          Yours truly, @username
+          Yours truly,
+          <input type="text" name="pseudonym" placeholder="Make up a name" value="@pseudonym">
           <button>Send</button>
         </div>
       </form>
