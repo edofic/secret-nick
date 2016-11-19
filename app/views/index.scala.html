@@ -1,4 +1,4 @@
-@(username: String, currentWish: String, pseudonym: String)(implicit flash: Flash)
+@(username: String, currentWish: String, pseudonym: String, participants: Seq[String])(implicit flash: Flash)
 
 <!DOCTYPE html>
 <html>
@@ -24,7 +24,14 @@
           <button>Send</button>
         </div>
       </form>
-
+      <div class="participants">
+        <a href="#">Participant list</a>
+        <ul>
+          @for(participant <- participants) {
+            <li>@participant</li>
+          }
+        </ul>
+      </div>
     </div>
   </body>
 </html>

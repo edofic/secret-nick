@@ -21,11 +21,12 @@ class RootController(wishes: WishService) extends Controller {
     }
 
   val index = withUser { userName => implicit request =>
-    wishes.getWishFor(userName).map { case (wish, pseudonym) =>
-      Ok(
-        views.html.index(userName, wish, pseudonym)
-      )
-    }
+    for {
+      (wish, pseudonym) <- wishes.getWishFor(userName)
+      participants <- wishes.participants()
+    } yield Ok(
+      views.html.index(userName, wish, pseudonym, participants)
+    )
   }
 
   val setWish = withUser { userName => implicit request =>

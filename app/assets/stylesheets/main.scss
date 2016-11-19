@@ -61,6 +61,30 @@ button, textarea, input {
       }
     }
   }
+
+  .participants {
+    overflow: hidden;
+    text-align: right;
+    a {
+      font-size: 67%;
+    }
+    ul {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      margin: 0;
+      list-style-type: none;
+      overflow: hidden;
+      max-height: 0px;
+      transition: max-height 1s ease;
+      li {
+        margin: 0.5em;
+      }
+    }
+    &:hover ul {
+      max-height: 80vh;
+    }
+  }
 }
 
 @keyframes shrinkdown {

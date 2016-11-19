@@ -9,6 +9,7 @@ import slick.driver.PostgresDriver
 trait WishService {
   def getWishFor(name: String): Future[(String, String)]
   def setWishFor(name: String, wish: String, pseudonym: String): Future[Unit]
+  def participants(): Future[Seq[String]]
 }
 
 object WishService {
@@ -23,6 +24,12 @@ object WishService {
       Future.successful {
         state = state.updated(name, (wish, pseudonym))
       }
+
+    def participants(): Future[Seq[String]] = Future.successful {
+      state.collect{
+        case (name, (wish, pseudonym)) if wish.trim.length > 0 && pseudonym.trim.length > 0 => name
+      }.toSeq
+    }
   }
 
   class DbBased(dbConfig: DatabaseConfig[PostgresDriver]) extends WishService {
@@ -38,12 +45,23 @@ object WishService {
         _.headOption getOrElse ("", "")
       )
     }
+
     def setWishFor(name: String, wish: String, pseudonym: String): Future[Unit] = {
       val query = Wish.table.insertOrUpdate(
         Wish(name, pseudonym, wish)
       )
       dbConfig.db.run(query).map(_ => ())
     }
+
+    def participants(): Future[Seq[String]] = {
+      val query = for {
+        wish <- Wish.table
+        if wish.wish.trim.length > 0
+        if wish.pseudonym.trim.length > 0
+      } yield wish.name
+      dbConfig.db.run(query.result)
+    }
+
   }
 
 }
