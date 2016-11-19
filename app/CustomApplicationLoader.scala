@@ -1,18 +1,27 @@
 import play.api._
 import play.api.libs.ws.ahc.{AhcWSClient, AhcWSClientConfig}
+import slick.driver.PostgresDriver
 
 import router.Routes
 
 class CustomApplicationLoader extends ApplicationLoader {
   def load(context: ApplicationLoader.Context) = {
-    new Components(context).application
+    val components = new Components(context)
+    components.applicationEvolutions // trigger lazy val
+    components.application
   }
 
-  class Components(context: ApplicationLoader.Context) extends BuiltInComponentsFromContext(context) {
+  class Components(context: ApplicationLoader.Context)
+      extends BuiltInComponentsFromContext(context)
+      with db.slick.SlickComponents
+      with db.slick.evolutions.SlickEvolutionsComponents
+      with db.evolutions.EvolutionsComponents
+      with db.HikariCPComponents {
 
     lazy val ws = AhcWSClient(AhcWSClientConfig())
+    lazy val dbConfig = api.dbConfig[PostgresDriver](db.slick.DbName("default"))
 
-    lazy val wishService = services.WishService.InMemory
+    lazy val wishService = new services.WishService.DbBased(dbConfig)
     lazy val fbConfig = controllers.LoginController.FacebookConfig(
       configuration.getString("fb.id").get,
       configuration.getString("fb.secret").get
