@@ -51,14 +51,18 @@ button, textarea, input {
       resize: none;
       flex-grow: 1;
     }
+  }
 
-    #signature {
-      display: flex;
-      align-items: baseline;
-      margin-left: auto;
-      button {
-        margin: 5px;
-      }
+  div.letter {
+    overflow-y: auto;
+  }
+
+  #signature {
+    display: flex;
+    align-items: baseline;
+    margin-left: auto;
+    button {
+      margin: 5px;
     }
   }
 

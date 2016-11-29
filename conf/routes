@@ -1,5 +1,7 @@
 GET     /               controllers.RootController.index
 POST    /set_wish       controllers.RootController.setWish
+POST    /shuffle        controllers.RootController.shuffle
+
 
 GET     /login          controllers.LoginController.loginPage
 GET     /loginCallback  controllers.LoginController.loginCallback()

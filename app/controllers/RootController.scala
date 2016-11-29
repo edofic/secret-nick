@@ -21,12 +21,21 @@ class RootController(wishes: WishService) extends Controller {
     }
 
   val index = withUser { userName => implicit request =>
-    for {
-      (wish, pseudonym) <- wishes.getWishFor(userName)
-      participants <- wishes.participants()
-    } yield Ok(
-      views.html.index(userName, wish, pseudonym, participants)
-    )
+    wishes.getWishFor(userName).flatMap{ case (wish, pseudonym, wisheeO) =>
+      wishes.participants().flatMap{ participants =>
+        wisheeO.map{ wishee =>
+          wishes.getWishFor(wishee).map { case (letter, signature, _) =>
+            Ok(views.html.view(letter, signature))
+          }
+        }.getOrElse(
+          Future.successful(
+            Ok(
+              views.html.edit(userName, wish, pseudonym, participants)
+            )
+          )
+        )
+      }
+    }
   }
 
   val setWish = withUser { userName => implicit request =>
@@ -38,6 +47,10 @@ class RootController(wishes: WishService) extends Controller {
         "success" -> "Message is on its way."
       )
     }
+  }
+
+  def shuffle() = withUser { userName => request =>
+    wishes.shuffle().map(_ => Ok("shuffled"))
   }
 
 }

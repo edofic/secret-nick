@@ -1,0 +1,27 @@
+@(username: String, currentWish: String, pseudonym: String, participants: Seq[String])(implicit flash: Flash)
+
+@views.html.base(flash.get("success").fold("")(_ => "sent")){
+  @flash.get("success").map { successMsg =>
+    <div id="success-msg">
+      @successMsg
+    </div>
+  }
+  <p>Dear St. Niklaus ...</p>
+  <form action="/set_wish" method="POST">
+    <textarea name="wishText">@currentWish</textarea>
+    <br/>
+    <div id="signature">
+      Yours truly,
+      <input type="text" name="pseudonym" placeholder="Make up a name" value="@pseudonym">
+      <button>Send</button>
+    </div>
+  </form>
+  <div class="participants">
+    <a href="#">Participant list</a>
+    <ul>
+      @for(participant <- participants) {
+        <li>@participant</li>
+      }
+    </ul>
+  </div>
+}
