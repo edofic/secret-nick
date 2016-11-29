@@ -17,20 +17,25 @@ trait WishService {
 object WishService {
 
   object InMemory extends WishService {
-    private[this] var state: Map[String, (String, String, Option[String])] = Map()
-    def getWishFor(name: String): Future[(String, String, Option[String])] = Future.successful(
-      state.get(name).getOrElse(("", "", None))
-    )
+    private[this] var state: Map[String, (String, String, Option[String])] =
+      Map()
+    def getWishFor(name: String): Future[(String, String, Option[String])] =
+      Future.successful(
+        state.get(name).getOrElse(("", "", None))
+      )
 
-    def setWishFor(name: String, wish: String, pseudonym: String): Future[Unit] =
+    def setWishFor(name: String,
+                   wish: String,
+                   pseudonym: String): Future[Unit] =
       Future.successful {
         state = state.updated(name, (wish, pseudonym, None))
       }
 
     def participants(): Future[Seq[String]] = Future.successful {
-      state.collect{
+      state.collect {
         case (name, (wish, pseudonym, wishee))
-        if wish.trim.length > 0 && pseudonym.trim.length > 0 => name
+            if wish.trim.length > 0 && pseudonym.trim.length > 0 =>
+          name
       }.toSeq
     }
 
@@ -41,9 +46,10 @@ object WishService {
       } else {
         val wishees = names.tail :+ names.head
         val allocations = (names zip wishees).toMap
-        state = state.map { case (name, (wish, pseudonym, currentWishee)) =>
-          val newWishee = allocations.get(name).orElse(currentWishee)
-          (name, (wish, pseudonym, newWishee))
+        state = state.map {
+          case (name, (wish, pseudonym, currentWishee)) =>
+            val newWishee = allocations.get(name).orElse(currentWishee)
+            (name, (wish, pseudonym, newWishee))
         }
       }
     }
@@ -58,12 +64,16 @@ object WishService {
         wish <- Wish.table
         if wish.name === name
       } yield (wish.wish, wish.pseudonym, wish.wishee)
-      dbConfig.db.run(query.result).map(
-        _.headOption getOrElse ("", "", None)
-      )
+      dbConfig.db
+        .run(query.result)
+        .map(
+          _.headOption getOrElse ("", "", None)
+        )
     }
 
-    def setWishFor(name: String, wish: String, pseudonym: String): Future[Unit] = {
+    def setWishFor(name: String,
+                   wish: String,
+                   pseudonym: String): Future[Unit] = {
       val query = Wish.table.insertOrUpdate(
         Wish(name, pseudonym, wish, None)
       )
@@ -80,7 +90,7 @@ object WishService {
     }
 
     def shuffle(): Future[Unit] = {
-      participants().flatMap{ participantList =>
+      participants().flatMap { participantList =>
         if (participantList.size < 2) {
           Future.successful(())
         } else {
@@ -88,8 +98,12 @@ object WishService {
           val wishees = names.tail :+ names.head
           val allocations = (names zip wishees).toMap
 
-          val updates = (names zip wishees).map { case (name, wishee) =>
-            Wish.table.filter(_.name === name).map(_.wishee).update(Some(wishee))
+          val updates = (names zip wishees).map {
+            case (name, wishee) =>
+              Wish.table
+                .filter(_.name === name)
+                .map(_.wishee)
+                .update(Some(wishee))
           }
           dbConfig.db.run(DBIO.sequence(updates)).map(_ => ())
         }
@@ -106,7 +120,7 @@ object WishService {
         val allocations = (names zip wishees).toMap
         ???
       }
-      */
+   */
   }
 
 }

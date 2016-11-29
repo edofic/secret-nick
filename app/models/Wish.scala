@@ -3,10 +3,10 @@ package models
 import slick.driver.PostgresDriver.api._
 
 case class Wish(
-  name: String,
-  pseudonym: String,
-  wish: String,
-  wishee: Option[String]
+    name: String,
+    pseudonym: String,
+    wish: String,
+    wishee: Option[String]
 )
 
 object Wish {
@@ -16,7 +16,8 @@ object Wish {
     def wish = column[String]("wish")
     def wishee = column[Option[String]]("wishee")
 
-    def * = (name, pseudonym, wish, wishee) <> ((Wish.apply _).tupled, Wish.unapply)
+    def * =
+      (name, pseudonym, wish, wishee) <> ((Wish.apply _).tupled, Wish.unapply)
   }
 
   val table = TableQuery[Wishes]

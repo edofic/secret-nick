@@ -9,32 +9,38 @@ import services.WishService
 
 class RootController(wishes: WishService, secret: String) extends Controller {
 
-  def withUser(f: String => Request[AnyContent] => Future[Result]): Action[AnyContent] =
+  def withUser(
+      f: String => Request[AnyContent] => Future[Result]): Action[AnyContent] =
     Action.async { request =>
-      request.session.get("userName").map { userName =>
-        f(userName)(request)
-      }.getOrElse {
-        Future.successful(
-          SeeOther(routes.LoginController.loginPage.url)
-        )
-      }
+      request.session
+        .get("userName")
+        .map { userName =>
+          f(userName)(request)
+        }
+        .getOrElse {
+          Future.successful(
+            SeeOther(routes.LoginController.loginPage.url)
+          )
+        }
     }
 
   val index = withUser { userName => implicit request =>
-    wishes.getWishFor(userName).flatMap{ case (wish, pseudonym, wisheeO) =>
-      wishes.participants().flatMap{ participants =>
-        wisheeO.map{ wishee =>
-          wishes.getWishFor(wishee).map { case (letter, signature, _) =>
-            Ok(views.html.view(letter, signature))
-          }
-        }.getOrElse(
-          Future.successful(
-            Ok(
-              views.html.edit(userName, wish, pseudonym, participants)
+    wishes.getWishFor(userName).flatMap {
+      case (wish, pseudonym, wisheeO) =>
+        wishes.participants().flatMap { participants =>
+          wisheeO.map { wishee =>
+            wishes.getWishFor(wishee).map {
+              case (letter, signature, _) =>
+                Ok(views.html.view(letter, signature))
+            }
+          }.getOrElse(
+            Future.successful(
+              Ok(
+                views.html.edit(userName, wish, pseudonym, participants)
+              )
             )
           )
-        )
-      }
+        }
     }
   }
 

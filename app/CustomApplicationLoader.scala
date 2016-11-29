@@ -19,7 +19,8 @@ class CustomApplicationLoader extends ApplicationLoader {
       with db.HikariCPComponents {
 
     lazy val ws = AhcWSClient(AhcWSClientConfig())
-    lazy val dbConfig = api.dbConfig[PostgresDriver](db.slick.DbName("default"))
+    lazy val dbConfig =
+      api.dbConfig[PostgresDriver](db.slick.DbName("default"))
 
     lazy val wishService = new services.WishService.DbBased(dbConfig)
     lazy val fbConfig = controllers.LoginController.FacebookConfig(
@@ -28,10 +29,10 @@ class CustomApplicationLoader extends ApplicationLoader {
     )
     lazy val shuffleSecret = configuration.getString("shuffleSecret").get
 
-    lazy val rootController = new controllers.RootController(wishService, shuffleSecret)
+    lazy val rootController =
+      new controllers.RootController(wishService, shuffleSecret)
     lazy val loginController = new controllers.LoginController(ws, fbConfig)
     lazy val assets = new controllers.Assets(httpErrorHandler)
-
 
     lazy val router = new Routes(
       httpErrorHandler,
