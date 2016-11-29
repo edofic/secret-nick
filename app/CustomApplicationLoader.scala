@@ -26,8 +26,9 @@ class CustomApplicationLoader extends ApplicationLoader {
       configuration.getString("fb.id").get,
       configuration.getString("fb.secret").get
     )
+    lazy val shuffleSecret = configuration.getString("shuffleSecret").get
 
-    lazy val rootController = new controllers.RootController(wishService)
+    lazy val rootController = new controllers.RootController(wishService, shuffleSecret)
     lazy val loginController = new controllers.LoginController(ws, fbConfig)
     lazy val assets = new controllers.Assets(httpErrorHandler)
 

@@ -7,7 +7,7 @@ import play.api.mvc._
 import play.api.libs.json.Json
 import services.WishService
 
-class RootController(wishes: WishService) extends Controller {
+class RootController(wishes: WishService, secret: String) extends Controller {
 
   def withUser(f: String => Request[AnyContent] => Future[Result]): Action[AnyContent] =
     Action.async { request =>
@@ -49,8 +49,12 @@ class RootController(wishes: WishService) extends Controller {
     }
   }
 
-  def shuffle() = withUser { userName => request =>
-    wishes.shuffle().map(_ => Ok("shuffled"))
+  def shuffle(providedSecret: String) = withUser { userName => request =>
+    if (providedSecret == secret) {
+      wishes.shuffle().map(_ => Ok("shuffled"))
+    } else {
+      Future.successful(Unauthorized("bad secret"))
+    }
   }
 
 }
