@@ -52,6 +52,10 @@ class LoginController(ws: WSClient, fbConfig: LoginController.FacebookConfig, co
     )
   }
 
+  val logout = Action {
+    Ok("logged out").withNewSession
+  }
+
 }
 
 object LoginController {

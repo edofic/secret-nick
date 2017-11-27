@@ -7,5 +7,6 @@ GET     /login          controllers.LoginController.loginPage
 GET     /loginCallback  controllers.LoginController.loginCallback()
 GET     /loginPresigned controllers.LoginController.loginPresigned(token)
 GET     /loginSign      controllers.LoginController.loginSign(name, secret)
+GET     /logout         controllers.LoginController.logout
 
 GET     /assets/*file   controllers.Assets.at(path="/public", file)

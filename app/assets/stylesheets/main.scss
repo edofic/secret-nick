@@ -25,6 +25,7 @@ button, textarea, input {
   overflow: hidden;
   border-radius: 20px;
   padding: 5vh;
+  padding-top: 3vh;
   box-sizing: border-box;
   opacity: 0.9;
   font-size: 150%;
@@ -41,6 +42,10 @@ button, textarea, input {
     animation-fill-mode: forwards;
   }
 
+  #user-menu {
+    margin-left: auto;
+    font-size: 67%;
+  }
 
   form {
     display: flex;
@@ -68,7 +73,7 @@ button, textarea, input {
 
   .participants {
     overflow: hidden;
-    text-align: right;
+    margin-left: auto;
     a {
       font-size: 67%;
     }
