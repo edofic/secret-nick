@@ -31,7 +31,7 @@ class CustomApplicationLoader extends ApplicationLoader {
 
     lazy val rootController =
       new controllers.RootController(wishService, shuffleSecret)
-    lazy val loginController = new controllers.LoginController(ws, fbConfig)
+    lazy val loginController = new controllers.LoginController(ws, fbConfig, shuffleSecret)
     lazy val assets = new controllers.Assets(httpErrorHandler)
 
     lazy val router = new Routes(

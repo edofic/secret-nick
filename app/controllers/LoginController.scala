@@ -5,8 +5,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.mvc._
 import play.api.libs.json.Json
 import play.api.libs.ws.WSClient
+import play.api.libs.Crypto
 
-class LoginController(ws: WSClient, fbConfig: LoginController.FacebookConfig)
+class LoginController(ws: WSClient, fbConfig: LoginController.FacebookConfig, configSecret: String)
     extends Controller {
 
   val appId = fbConfig.appId
@@ -34,6 +35,21 @@ class LoginController(ws: WSClient, fbConfig: LoginController.FacebookConfig)
         )
       }
     }
+  }
+
+  def loginSign(name: String, secret: String) = Action {
+    if (secret != configSecret) {
+      Unauthorized("bad secret")
+    } else {
+      Ok(Crypto.encryptAES(name))
+    }
+  }
+
+  def loginPresigned(token: String) = Action { request =>
+    val userName = Crypto.decryptAES(token)
+    SeeOther(routes.RootController.index.url).withSession(
+      request.session + ("userName" -> userName)
+    )
   }
 
 }
