@@ -1,4 +1,4 @@
-@(username: String, currentWish: String, pseudonym: String, participants: Seq[String])(implicit flash: Flash)
+@(username: String, currentWish: String, pseudonym: String, participants: Seq[String], msgs: services.Messages)(implicit flash: Flash)
 
 @views.html.base(flash.get("success").fold("")(_ => "sent")){
   @flash.get("success").map { successMsg =>
@@ -7,21 +7,21 @@
     </div>
   }
   <div style="margin-left: auto;font-size: 67%;">
-    Hi @username,
-    <a href="/logout">logout</a>
+    @msgs.hi @username,
+    <a href="/logout">@msgs.logout</a>
   </div>
-  <div>Dear St. Niklaus ...</div>
+  <div>@msgs.dearNick</div>
   <form action="/set_wish" method="POST">
     <textarea name="wishText">@currentWish</textarea>
     <br/>
     <div id="signature">
-      Yours truly,
-      <input type="text" name="pseudonym" placeholder="Make up a name" value="@pseudonym">
-      <button>Send</button>
+      @msgs.signature
+      <input type="text" name="pseudonym" placeholder="@msgs.pseudonym" value="@pseudonym">
+      <button>@msgs.send</button>
     </div>
   </form>
   <div class="participants">
-    <a href="#">Participant list</a>
+    <a href="#">@msgs.participants</a>
     <ul>
       @for(participant <- participants) {
         <li>@participant</li>

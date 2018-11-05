@@ -5,9 +5,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import play.api.mvc._
 import play.api.libs.json.Json
-import services.WishService
+import services.{Messages, WishService}
 
-class RootController(wishes: WishService, secret: String) extends Controller {
+class RootController(wishes: WishService, secret: String, msgs: Messages) extends Controller {
 
   def withUser(
       f: String => Request[AnyContent] => Future[Result]): Action[AnyContent] =
@@ -36,7 +36,7 @@ class RootController(wishes: WishService, secret: String) extends Controller {
           }.getOrElse(
             Future.successful(
               Ok(
-                views.html.edit(userName, wish, pseudonym, participants)
+                views.html.edit(userName, wish, pseudonym, participants, msgs)
               )
             )
           )
@@ -50,7 +50,7 @@ class RootController(wishes: WishService, secret: String) extends Controller {
     val pseudonym = form("pseudonym").headOption.getOrElse(userName)
     wishes.setWishFor(userName, newWish, pseudonym).map { _ =>
       SeeOther(routes.RootController.index.url).flashing(
-        "success" -> "Message is on its way."
+        "success" -> msgs.msgEnRoute
       )
     }
   }

@@ -29,8 +29,13 @@ class CustomApplicationLoader extends ApplicationLoader {
     )
     lazy val shuffleSecret = configuration.getString("shuffleSecret").get
 
+    lazy val msgs = configuration.getString("lang").get match {
+      case "en" => services.Messages.En
+      case "sl" => services.Messages.Sl
+    }
+
     lazy val rootController =
-      new controllers.RootController(wishService, shuffleSecret)
+      new controllers.RootController(wishService, shuffleSecret, msgs)
     lazy val loginController = new controllers.LoginController(ws, fbConfig, shuffleSecret)
     lazy val assets = new controllers.Assets(httpErrorHandler)
 
